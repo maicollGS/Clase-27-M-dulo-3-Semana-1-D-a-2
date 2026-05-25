@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumen Clase 27 — Transparencia, Git y JavaScript</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #f8f7f3;
+    color: #1a1a18;
+    line-height: 1.6;
+    padding: 0;
+  }
+  .hero {
+    background: #185FA5;
+    color: #E6F1FB;
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+  }
+  .hero .kicker {
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #85B7EB;
+    margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-size: 22px;
+    font-weight: 500;
+    color: #E6F1FB;
+    margin-bottom: 8px;
+  }
+  .hero p {
+    font-size: 14px;
+    color: #B5D4F4;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .tabs {
+    display: flex;
+    overflow-x: auto;
+    background: #0C447C;
+    padding: 0 1rem;
+    gap: 0;
+  }
+  .tab {
+    flex-shrink: 0;
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #85B7EB;
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 3px solid transparent;
+    transition: all .15s;
+  }
+  .tab.active {
+    color: #E6F1FB;
+    border-bottom-color: #E6F1FB;
+  }
+  .tab:hover:not(.active) { color: #B5D4F4; }
+  .content { padding: 1.5rem 1rem; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 0.5px solid #e0ddd5;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1a1a18;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title i { font-size: 18px; color: #185FA5; }
+  .row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .row i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+  .row p { font-size: 13px; color: #444441; line-height: 1.5; }
+  .row strong { font-weight: 500; color: #1a1a18; display: block; margin-bottom: 2px; }
+  .pill {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 99px;
+    margin: 2px;
+    font-weight: 500;
+  }
+  .pill-blue { background: #E6F1FB; color: #0C447C; }
+  .pill-green { background: #EAF3DE; color: #27500A; }
+  .pill-amber { background: #FAEEDA; color: #633806; }
+  .pill-red { background: #FCEBEB; color: #791F1F; }
+  .pill-purple { background: #EEEDFE; color: #3C3489; }
+  .cmd {
+    display: inline-block;
+    background: #2C2C2A;
+    color: #9FE1CB;
+    font-family: monospace;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 2px 0;
+  }
+  .step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #185FA5;
+    color: #E6F1FB;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-body { flex: 1; }
+  .step-body strong { font-size: 14px; font-weight: 500; color: #1a1a18; display: block; }
+  .step-body span { font-size: 13px; color: #5F5E5A; line-height: 1.5; }
+  .alert {
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .alert i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .alert-amber { background: #FAEEDA; color: #633806; }
+  .alert-red { background: #FCEBEB; color: #791F1F; }
+  .alert-green { background: #EAF3DE; color: #27500A; }
+  .alert-blue { background: #E6F1FB; color: #0C447C; }
+  .quiz-q {
+    background: #f8f7f3;
+    border-radius: 8px;
+    border: 0.5px solid #e0ddd5;
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #1a1a18;
+    user-select: none;
+  }
+  .quiz-q:hover { border-color: #B5D4F4; background: #E6F1FB; }
+  .quiz-a {
+    display: none;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 0.5px solid #e0ddd5;
+    color: #0C447C;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .quiz-q.open { background: #E6F1FB; border-color: #85B7EB; }
+  .quiz-q.open .quiz-a { display: block; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .mini-card {
+    background: #f8f7f3;
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 0.5px solid #e0ddd5;
+  }
+  .mini-card .lbl { font-size: 11px; color: #888780; margin-bottom: 4px; }
+  .mini-card .val { font-size: 14px; font-weight: 500; color: #1a1a18; }
+  .mini-card .sub { font-size: 12px; color: #5F5E5A; margin-top: 4px; line-height: 1.4; }
+  .footer {
+    text-align: center;
+    padding: 1.25rem;
+    font-size: 12px;
+    color: #888780;
+    border-top: 0.5px solid #e0ddd5;
+    margin-top: .5rem;
+  }
+  .tareas-list { list-style: none; padding: 0; }
+  .tareas-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid #e0ddd5;
+    font-size: 13px;
+    color: #444441;
+  }
+  .tareas-list li:last-child { border-bottom: none; }
+  .tareas-list li i { font-size: 16px; color: #185FA5; flex-shrink: 0; margin-top: 1px; }
+  @media (max-width: 420px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="kicker">Clase 27 · Semana 6</div>
+  <h1>Transparencia, Git y JavaScript</h1>
+  <p>Aprendiste a publicar código con responsabilidad y a ser un ciudadano digital crítico.</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('transp', this)"><i class="ti ti-eye" aria-hidden="true"></i> Transparencia</button>
+  <button class="tab" onclick="show('desinf', this)"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Desinformación</button>
+  <button class="tab" onclick="show('git', this)"><i class="ti ti-git-branch" aria-hidden="true"></i> Git</button>
+  <button class="tab" onclick="show('js', this)"><i class="ti ti-brand-javascript" aria-hidden="true"></i> JavaScript</button>
+  <button class="tab" onclick="show('tareas', this)"><i class="ti ti-check" aria-hidden="true"></i> Tareas</button>
+</div>
+
+<div class="content">
+
+  <!-- TRANSPARENCIA -->
+  <div id="transp" class="section active">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-building-bank" aria-hidden="true"></i> ¿Qué es la Ley 1712 de 2014?</div>
+      <div class="row">
+        <i class="ti ti-file-text" style="color:#185FA5" aria-hidden="true"></i>
+        <p>Es la ley colombiana que garantiza que cualquier ciudadano puede acceder a la información del Estado. <strong>Sin esa info, no hay transparencia.</strong></p>
+      </div>
+      <div class="row">
+        <i class="ti ti-users" style="color:#185FA5" aria-hidden="true"></i>
+        <p>La transparencia genera confianza. Si el Estado publica todo de forma clara, los rumores no tienen espacio para crecer.</p>
+      </div>
+      <div class="alert alert-blue">
+        <i class="ti ti-bulb" aria-hidden="true"></i>
+        <span>Piénsalo así: si en tu colegio el rector publicara todas las decisiones del año, ¿confiarías más en la institución?</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-shield" aria-hidden="true"></i> El código también puede ser transparente</div>
+      <div class="row">
+        <i class="ti ti-code" style="color:#185FA5" aria-hidden="true"></i>
+        <p><strong>Desde la primera línea</strong> de código debes pensar: ¿qué datos muestro? ¿cuáles debo proteger? ¿a quién le sirve esta información?</p>
+      </div>
+      <div class="row">
+        <i class="ti ti-lock" style="color:#854F0B" aria-hidden="true"></i>
+        <p>Hay información que NO se puede publicar: datos de salud, antecedentes penales, datos de menores. La ley pone límites.</p>
+      </div>
+      <div class="alert alert-amber">
+        <i class="ti ti-info-circle" aria-hidden="true"></i>
+        <span>Tu proyecto pedagógico <strong>no es una herramienta para hacer denuncias reales.</strong> Es para aprender a construir con responsabilidad.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-route" aria-hidden="true"></i> Rutas institucionales si encuentras una irregularidad</div>
+      <div class="row"><i class="ti ti-point" style="color:#1D9E75" aria-hidden="true"></i><p><strong>MOE</strong> — Misión de Observación Electoral: para observar y aprender sobre el proceso.</p></div>
+      <div class="row"><i class="ti ti-point" style="color:#1D9E75" aria-hidden="true"></i><p><strong>Personería / Procuraduría</strong> — para defender derechos y controlar a funcionarios.</p></div>
+      <div class="row"><i class="ti ti-point" style="color:#1D9E75" aria-hidden="true"></i><p><strong>CNE</strong> — Consejo Nacional Electoral: autoridad administrativa.</p></div>
+      <div class="row"><i class="ti ti-point" style="color:#1D9E75" aria-hidden="true"></i><p><strong>Fiscalía / URIEL</strong> — para delitos electorales como compra de votos.</p></div>
+    </div>
+  </div>
+
+  <!-- DESINFORMACIÓN -->
+  <div id="desinf" class="section">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-alert-triangle" aria-hidden="true"></i> El caso real: 54.000 personas engañadas</div>
+      <div class="row">
+        <i class="ti ti-photo" style="color:#D85A30" aria-hidden="true"></i>
+        <p>Una imagen <strong>real pero descontextualizada</strong> de un acta electoral llegó a más de 54.000 cuentas en poco tiempo, generando interpretaciones falsas de fraude.</p>
+      </div>
+      <div class="row">
+        <i class="ti ti-trending-up" style="color:#D85A30" aria-hidden="true"></i>
+        <p><strong>Velocidad viral ≠ verdad.</strong> Que algo se comparte mucho no significa que sea correcto.</p>
+      </div>
+      <div class="alert alert-red">
+        <i class="ti ti-x" aria-hidden="true"></i>
+        <span>Una inconsistencia en un documento electoral NO es automáticamente un fraude. Requiere análisis, contexto y rutas oficiales.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-brain" aria-hidden="true"></i> Cómo verificar antes de compartir</div>
+      <div class="step"><div class="step-num">1</div><div class="step-body"><strong>¿Quién publica?</strong><span>Revisa la cuenta o fuente. ¿Tiene historial? ¿Es anónima?</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><strong>¿Cuándo se publicó?</strong><span>Una foto vieja puede viralizarse como si fuera de hoy.</span></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><strong>¿Qué dice la fuente original?</strong><span>Busca el documento o hecho original, no la captura de pantalla.</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Verifica con Colombia Check</strong><span>Es la herramienta de fact-checking en Colombia. Úsala antes de compartir.</span></div></div>
+      <div class="alert alert-green">
+        <i class="ti ti-check" aria-hidden="true"></i>
+        <span>Reemplaza "esto es fraude" por "esto me parece raro, lo voy a verificar". El lenguaje responsable protege derechos.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-message-report" aria-hidden="true"></i> Qué NO hacer</div>
+      <div class="row"><i class="ti ti-x" style="color:#E24B4A" aria-hidden="true"></i><p>Publicar nombres de personas sin haber verificado la información.</p></div>
+      <div class="row"><i class="ti ti-x" style="color:#E24B4A" aria-hidden="true"></i><p>Compartir imágenes borrosas como "prueba definitiva".</p></div>
+      <div class="row"><i class="ti ti-x" style="color:#E24B4A" aria-hidden="true"></i><p>Acusar públicamente basándote solo en emociones o rumores.</p></div>
+      <div class="row"><i class="ti ti-x" style="color:#E24B4A" aria-hidden="true"></i><p>Exponer datos sensibles de menores de edad.</p></div>
+    </div>
+  </div>
+
+  <!-- GIT -->
+  <div id="git" class="section">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-git-branch" aria-hidden="true"></i> Lo que hicimos hoy en Git</div>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Nos ubicamos en la rama correcta</strong>
+          <span><span class="cmd">git branch</span> para ver ramas, <span class="cmd">git checkout clase-26</span> para cambiarse.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Actualizamos el proyecto</strong>
+          <span><span class="cmd">git pull</span> descarga los últimos cambios del repositorio remoto.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Creamos la rama nueva</strong>
+          <span><span class="cmd">git checkout -b "clase 27 estructura visual JS"</span></span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <strong>Creamos archivos y los registramos</strong>
+          <span><span class="cmd">touch estilos.css app.js</span> → <span class="cmd">git status</span> → <span class="cmd">git add .</span></span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <strong>Commit y push</strong>
+          <span><span class="cmd">git commit -m "creación de los dos archivos para clase 27"</span> → <span class="cmd">git push</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-help-circle" aria-hidden="true"></i> ¿Por qué separamos los archivos?</div>
+      <div class="grid2">
+        <div class="mini-card">
+          <div class="lbl">index.html</div>
+          <div class="val">Estructura</div>
+          <div class="sub">El esqueleto de la página. Qué hay y dónde va.</div>
+        </div>
+        <div class="mini-card">
+          <div class="lbl">estilos.css</div>
+          <div class="val">Diseño visual</div>
+          <div class="sub">Colores, tipografía, márgenes y presentación.</div>
+        </div>
+        <div class="mini-card">
+          <div class="lbl">app.js</div>
+          <div class="val">Interacción</div>
+          <div class="sub">Lo que pasa cuando el usuario hace clic o interactúa.</div>
+        </div>
+        <div class="mini-card">
+          <div class="lbl">Beneficio</div>
+          <div class="val">Mantenimiento fácil</div>
+          <div class="sub">Si algo falla en el diseño, vas directo a CSS sin tocar el resto.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT -->
+  <div id="js" class="section">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-brand-javascript" aria-hidden="true"></i> Lo que implementamos en clase</div>
+      <div class="row">
+        <i class="ti ti-cursor-text" style="color:#185FA5" aria-hidden="true"></i>
+        <p><strong>Capturar elementos del DOM</strong><br><span style="font-size:12px;color:#888780;">Usamos <span class="cmd">getElementById</span> para conectar el código con los botones y párrafos del HTML.</span></p>
+      </div>
+      <div class="row">
+        <i class="ti ti-click" style="color:#185FA5" aria-hidden="true"></i>
+        <p><strong>Escuchar el evento clic</strong><br><span style="font-size:12px;color:#888780;">Con <span class="cmd">addEventListener('click', función)</span> el botón reacciona cuando el usuario lo presiona.</span></p>
+      </div>
+      <div class="row">
+        <i class="ti ti-message" style="color:#185FA5" aria-hidden="true"></i>
+        <p><strong>Mostrar un mensaje</strong><br><span style="font-size:12px;color:#888780;">Al hacer clic, la función ejecuta un <span class="cmd">alert()</span> y cambia el <span class="cmd">textContent</span> de un párrafo en la página.</span></p>
+      </div>
+      <div class="row">
+        <i class="ti ti-123" style="color:#185FA5" aria-hidden="true"></i>
+        <p><strong>Contador de clics</strong><br><span style="font-size:12px;color:#888780;">Con una variable <span class="cmd">let contador = 0</span>, sumamos 1 con cada clic y mostramos el total actualizado al usuario.</span></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-device-laptop" aria-hidden="true"></i> Prueba de concepto interactiva</div>
+      <p style="font-size:13px;color:#5F5E5A;margin-bottom:12px;">Así funciona lo que construiste hoy. Haz clic en el botón:</p>
+      <div style="background:#f8f7f3;border-radius:8px;padding:16px;border:0.5px solid #e0ddd5;">
+        <p style="font-size:13px;color:#888780;margin-bottom:10px;">Botón de la clase 27:</p>
+        <button id="btn-clase" style="padding:8px 20px;background:#185FA5;color:#E6F1FB;border:none;border-radius:8px;font-size:13px;cursor:pointer;">Haz clic aquí</button>
+        <p id="msg-clase" style="margin-top:12px;font-size:14px;font-weight:500;color:#1a1a18;min-height:20px;"></p>
+        <p style="margin-top:6px;font-size:12px;color:#888780;">Clics registrados: <strong id="count-display">0</strong></p>
+      </div>
+      <div class="alert alert-blue" style="margin-top:12px;">
+        <i class="ti ti-code" aria-hidden="true"></i>
+        <span>Este es exactamente el patrón que implementaste: <span class="cmd">getElementById</span> + <span class="cmd">addEventListener</span> + <span class="cmd">textContent</span> + contador con <span class="cmd">let</span>.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAREAS -->
+  <div id="tareas" class="section">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-checklist" aria-hidden="true"></i> Actividades para esta semana</div>
+      <ul class="tareas-list">
+        <li><i class="ti ti-git-fork" aria-hidden="true"></i><span><strong>Forkear el repositorio</strong> si aún no lo has hecho. Así tienes tu propia copia para trabajar.</span></li>
+        <li><i class="ti ti-git-branch" aria-hidden="true"></i><span><strong>Crear la rama clase 27</strong> en tu entorno de desarrollo para registrar los avances de hoy.</span></li>
+        <li><i class="ti ti-file-plus" aria-hidden="true"></i><span><strong>Crear los archivos nuevos</strong> (<span class="cmd">estilos.css</span> y <span class="cmd">app.js</span>) dentro de la rama 27.</span></li>
+        <li><i class="ti ti-message-circle" aria-hidden="true"></i><span><strong>Participar en el Foro semana 6</strong> en Moodle: explica por qué la transparencia y la evidencia son vitales en un proyecto digital. Debate con respeto.</span></li>
+        <li><i class="ti ti-upload" aria-hidden="true"></i><span><strong>Hacer commit y push</strong> de la rama clase 27 para que el docente pueda ver tus avances en GitHub.</span></li>
+        <li><i class="ti ti-list-check" aria-hidden="true"></i><span><strong>Revisar actividades pendientes</strong> de módulos anteriores. Si hay notas incorrectas, repórtalo al docente.</span></li>
+      </ul>
+      <div class="alert alert-amber" style="margin-top:8px;">
+        <i class="ti ti-clock" aria-hidden="true"></i>
+        <span>Mañana hay mesa técnica de 9:00 AM a 10:00 AM para resolver dudas. ¡Aprovéchala!</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-target" aria-hidden="true"></i> Idea clave para el foro</div>
+      <div class="row">
+        <i class="ti ti-quote" style="color:#185FA5" aria-hidden="true"></i>
+        <p style="font-style:italic;color:#444441;">"La transparencia en el código y en la información pública son lo mismo: si ocultas cómo funciona algo, pierdes la confianza de quien lo usa."</p>
+      </div>
+      <div style="margin-top:10px;">
+        <span class="pill pill-blue">Ley 1712 de 2014</span>
+        <span class="pill pill-green">Evidencia antes de acusar</span>
+        <span class="pill pill-purple">Comunicación responsable</span>
+        <span class="pill pill-amber">Rutas institucionales</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Clase 27 · ESE del Departamento del Meta · Módulo Desarrollo Web y Ciudadanía Digital
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function toggle(el) { el.classList.toggle('open'); }
+
+var count = 0;
+var btn = document.getElementById('btn-clase');
+var msg = document.getElementById('msg-clase');
+var countEl = document.getElementById('count-display');
+if (btn) {
+  btn.addEventListener('click', function() {
+    count++;
+    countEl.textContent = count;
+    if (count === 1) msg.textContent = '¡Funciona! Este es tu primer evento click.';
+    else if (count === 3) msg.textContent = '¡Tres clics! Así se construye un contador.';
+    else if (count === 5) msg.textContent = 'Cinco. Ya entendiste la lógica. ¡Bien hecho!';
+    else msg.textContent = 'Clic número ' + count + ' registrado correctamente.';
+  });
+}
+</script>
+</body>
+</html>
